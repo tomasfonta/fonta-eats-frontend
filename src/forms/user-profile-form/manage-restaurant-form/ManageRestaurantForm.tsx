@@ -3,6 +3,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import DetailsSection from "./DetailsSection";
+import { Separator } from "@radix-ui/react-separator";
+import CuisinesSection from "./CuisinesSection";
+import MenuSection from "./MenuSection";
+import ImageSection from "./ImageSection";
+import LoadingButton from "@/components/LoadingButton";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -14,7 +20,7 @@ const formSchema = z.object({
         required_error: "Estimated delivery price is required",
         invalid_type_error: "Must be a valid Number"
     }),
-    cousines: z.array(z.string().nonempty({
+    cuisines: z.array(z.string().nonempty({
         message: "please select at least one item",
     })),
     menuItems: z.array(z.object({
@@ -37,28 +43,30 @@ const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
     const form = useForm<restaurantFormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            cousines: [],
+            cuisines: [],
             menuItems: [{ name: "", price: 0 }],
         },
     });
 
     const onSubmit = (formDataJson: restaurantFormData) => {
-
         // TODO convert formDataJson to a new FormData object
-
-
     }
 
     return (
         <Form {...form}>
-
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-8 bg-gray-50 p-10 rounded-lg"
             >
                 <DetailsSection />
+                <Separator />
+                <CuisinesSection />
+                <Separator />
+                <MenuSection />
+                <Separator />
+                <ImageSection />
+                {isLoading ? <LoadingButton /> : <Button type="submit" >Submit</Button>}
             </form>
-
         </Form>
     );
 };
