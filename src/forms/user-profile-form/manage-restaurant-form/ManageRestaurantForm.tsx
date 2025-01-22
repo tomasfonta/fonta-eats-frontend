@@ -10,14 +10,16 @@ import ImageSection from "./ImageSection";
 import LoadingButton from "@/components/LoadingButton";
 import { Button } from "@/components/ui/button";
 
-
-
 const formSchema = z.object({
     restaurantName: z.string().min(1, "Name is required"),
     city: z.string().min(1, "City is required"),
     country: z.string().min(1, "Country is required"),
-    estimatedDeliveryPrice: z.coerce.number({
-        required_error: "Estimated delivery price is required",
+    deliveryPrice: z.coerce.number({
+        required_error: "Delivery price is required",
+        invalid_type_error: "Must be a valid Number"
+    }),
+    estimatedDeliveryTime: z.coerce.number({
+        required_error: "Estimated delivery Time is required",
         invalid_type_error: "Must be a valid Number"
     }),
     cuisines: z.array(z.string().nonempty({
@@ -31,7 +33,7 @@ const formSchema = z.object({
     imageFile: z.instanceof(File, { message: "image is required" }),
 });
 
-type restaurantFormData = z.infer<typeof formSchema>
+type RestaurantFormData = z.infer<typeof formSchema>
 
 type Props = {
     onSave: (restaurantFormData: FormData) => void;
@@ -40,7 +42,7 @@ type Props = {
 
 const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
 
-    const form = useForm<restaurantFormData>({
+    const form = useForm<RestaurantFormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             cuisines: [],
@@ -48,8 +50,28 @@ const ManageRestaurantForm = ({ onSave, isLoading }: Props) => {
         },
     });
 
-    const onSubmit = (formDataJson: restaurantFormData) => {
-        // TODO convert formDataJson to a new FormData object
+    const onSubmit = (formDataJson: RestaurantFormData) => {
+        const formData = new FormData();
+
+        formData.append("restaurantName", formDataJson.restaurantName);
+        formData.append("country", formDataJson.country);
+        formData.append("city", formDataJson.city);
+
+        formData.append("deliveryPrice", formDataJson.deliveryPrice.toString());
+        formData.append("estimatedDeliveryTime", formDataJson.estimatedDeliveryTime.toString());
+
+        formDataJson.cuisines.forEach((item, index) => {
+            formData.append(`cuisines[${index}]`, item);
+        });
+
+        formDataJson.menuItems.forEach((item, index) => {
+            formData.append(`menuItems[${index}][name]`, item.name);
+            formData.append(`menuItems[${index}][price]`, item.price.toString());
+        });
+
+        formData.append("imageFile", formDataJson.imageFile);
+
+        onSave(formData);
     }
 
     return (
