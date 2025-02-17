@@ -23,7 +23,7 @@ const HomePage = () => {
                 <SearchBar
                     placeholder="Search by City of Town"
                     onSubmit={handleSearchSubmit}
-                />
+                    searchQuery={""} />
             </div>
             <div className="grid md:grid-cols-2 gap-5" >
                 <img src={landingImage} />
