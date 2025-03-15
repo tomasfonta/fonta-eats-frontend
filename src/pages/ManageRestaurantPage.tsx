@@ -9,11 +9,13 @@ const ManageRestaurantPage = () => {
 
     const isEditing = !!restaurant;
 
-    return <ManageRestaurantForm
-        onSave={isEditing ? updateRestaurant : createRestaurant}
-        isLoading={isCreateLoading || isUpdateLoading}
-        restaurant={restaurant}
-    />;
+    return (
+        <ManageRestaurantForm
+            onSave={isEditing ? updateRestaurant : createRestaurant}
+            isLoading={isCreateLoading || isUpdateLoading}
+            restaurant={restaurant}
+        />
+    );
 }
 
 export default ManageRestaurantPage;
